@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BridgeMonitor.Models;
+using Newtonsoft.Json;
 
 namespace BridgeMonitor.Controllers
 {
@@ -20,12 +22,24 @@ namespace BridgeMonitor.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var infos = GetBridgeInfosFromApi();
+            return View(infos);
         }
 
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        private static List<BridgeInfo> GetBridgeInfosFromApi()
+        {
+            using (var client = new HttpClient())
+            {
+                var response = client.GetAsync("https://api.alexandredubois.com/pont-chaban/api.php");
+                var stringResult = response.Result.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<List<BridgeInfo>>(stringResult.Result);
+                return result;
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
