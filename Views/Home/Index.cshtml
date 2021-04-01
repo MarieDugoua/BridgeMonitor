@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@using System.Globalization
 @model List<BridgeInfo>
 
 <div class="text-center">
@@ -19,12 +20,13 @@
     <tbody>
     @foreach (var info in Model)
     {
+        var culture = new CultureInfo("fr-FR");
         <tr>
             <td></td>
             <td>@info.BoatName</td>
             <td>@info.ClosingType</td>
-            <td>@info.ClosingDate</td>
-            <td>@info.ReopeningDate</td>
+            <td>@info.ClosingDate.ToString("dddd d MMMM, hh:mm", culture)</td>
+            <td>@info.ReopeningDate.ToString("dddd d MMMM, hh:mm", culture)</td>
         </tr>
     }
     </tbody>
