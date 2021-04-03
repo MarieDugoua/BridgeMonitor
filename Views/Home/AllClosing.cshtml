@@ -22,7 +22,7 @@
     @foreach (var info in Model)
     {
         var culture = new CultureInfo("fr-FR");
-        if (@info.ClosingDate >= DateTime.Now && @info.ClosingDate.Hour >= DateTime.Now.Hour)
+        if (@info.ClosingDate >= DateTime.Now )
         {
             <tr>
                 <td class="text-center">@info.BoatName</td>
@@ -54,7 +54,7 @@
     {
 
         var culture = new CultureInfo("fr-FR");
-        if (@info.ClosingDate < DateTime.Now && @info.ClosingDate.Hour < DateTime.Now.Hour)
+        if (@info.ClosingDate < DateTime.Now)
         {
             <tr>
                 <td class="text-center">@info.BoatName</td>
