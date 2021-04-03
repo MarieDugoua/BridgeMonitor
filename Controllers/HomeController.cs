@@ -23,9 +23,15 @@ namespace BridgeMonitor.Controllers
             return View(infos);
         }
 
+        public IActionResult AllClosing()
+        {
+            var infos = GetBridgeInfosFromApi();
+            return View(infos);
+        }
         public IActionResult Privacy()
         {
-            return View();
+            var infos = GetBridgeInfosFromApi();
+            return View(infos);
         }
 
         private static List<BridgeInfo> GetBridgeInfosFromApi()

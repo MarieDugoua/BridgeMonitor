@@ -1,0 +1,91 @@
+@{
+    ViewData["Title"] = "All closing";
+}
+@using System.Globalization
+@model List<BridgeInfo>
+
+<div class="text-center">
+    <h1 class="display-4">Fermeture à venir</h1>
+</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col" class="text-center">Bateau</th>
+        <th scope="col" class="text-center">Type de fermeture</th>
+        <th scope="col" class="text-center">Durée de fermeture</th>
+        <th scope="col" class="text-center">Date de fermeture</th>
+        <th scope="col" class="text-center">Date de réouverture</th>
+        <th scope="col" class="text-center">Risque de bouchons</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var info in Model)
+    {
+        var culture = new CultureInfo("fr-FR");
+        if (@info.ClosingDate >= DateTime.Now && @info.ClosingDate.Hour >= DateTime.Now.Hour)
+                {
+                    <tr>
+                        <td class="text-center">@info.BoatName</td>
+                        <td class="text-center">@info.ClosingType</td>
+                        <td class="text-center">@info.ClosingDate</td>
+                        <td class="text-center">@info.ReopeningDate.Subtract(@info.ClosingDate)</td>
+                        <td class="text-center">@info.ClosingDate.ToString("dddd d MMMM, hh:mm", culture)</td>
+                        <td class="text-center">@info.ReopeningDate.ToString("dddd d MMMM, hh:mm", culture)</td>
+                        @if (@info.ClosingDate.Hour >= 7 && @info.ClosingDate.Hour <= 9 
+                             || @info.ClosingDate.Hour >= 17 && @info.ClosingDate.Hour <= 19
+                            )
+                        {
+                            <td class="text-center" style="color: red;">Perturbé</td> 
+                        }
+                        else
+                        {
+                            <td class="text-center" style="color: green;">FLuide</td>
+                        }
+                    </tr>
+                }
+    }
+    </tbody>
+</table> 
+
+<div class="text-center">
+    <h1 class="display-4">Fermeture passées</h1>
+</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col" class="text-center">Bateau</th>
+        <th scope="col" class="text-center">Type de fermeture</th>
+        <th scope="col" class="text-center">Durée de fermeture</th>
+        <th scope="col" class="text-center">Date de fermeture</th>
+        <th scope="col" class="text-center">Date de réouverture</th>
+        <th scope="col" class="text-center">Risque de bouchons</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var info in Model)
+    {
+        var culture = new CultureInfo("fr-FR");
+        if (@info.ClosingDate < DateTime.Now && @info.ClosingDate.Hour < DateTime.Now.Hour)
+        {
+            <tr>
+                <td class="text-center">@info.BoatName</td>
+                <td class="text-center">@info.ClosingType</td>
+                <td class="text-center">@info.ClosingDate</td>
+                <td class="text-center">@info.ReopeningDate.Subtract(@info.ClosingDate)</td>
+                <td class="text-center">@info.ClosingDate.ToString("dddd d MMMM, hh:mm", culture)</td>
+                <td class="text-center">@info.ReopeningDate.ToString("dddd d MMMM, hh:mm", culture)</td>
+                @if (@info.ClosingDate.Hour >= 7 && @info.ClosingDate.Hour <= 9 
+                     || @info.ClosingDate.Hour >= 17 && @info.ClosingDate.Hour <= 19
+                    )
+                {
+                    <td class="text-center" style="color: red;">Perturbé</td> 
+                }
+                else
+                {
+                    <td class="text-center" style="color: green;">Fluide</td>
+                }
+            </tr>
+        }
+    }
+    </tbody>
+</table> 

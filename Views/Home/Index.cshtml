@@ -2,7 +2,6 @@
     ViewData["Title"] = "Home Page";
 }
 @using System.Globalization
-@using Microsoft.JSInterop.Infrastructure
 @model List<BridgeInfo>
 
 @{
@@ -41,13 +40,17 @@
           var seconds = Math.floor((distance % (1000 * 60)) / 1000);
         
           // Display the result in the element with id="demo"
-          document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+          document.getElementById("countDown").style.color = "red";
+          document.getElementById("countDown").style.fontSize= "40px";
+          document.getElementById("countDown").innerHTML = days + "d " + hours + "h "
           + minutes + "m " + seconds + "s ";
         
           // If the count down is finished, write some text
-          if (distance < 0) {
+          if (distance <= 0) {
             clearInterval(x);
-            document.getElementById("demo").innerHTML = "EXPIRED";
+            document.getElementById("countDown").style.color = "red";
+            document.getElementById("countDown").style.fontSize= "40px";
+            document.getElementById("countDown").innerHTML = "Pont fermé";
           }
         }, 1000);
         </script>
@@ -57,29 +60,37 @@
     <h1 class="display-4">Prochaine fermeture</h1>
     
     <!-- Display the countdown timer in an element -->
-    <p id="demo"></p>
+    <p id="countDown"></p>
 </div>
 <table class="table">
     <thead>
     <tr>
-        <th scope="col"></th>
-        <th scope="col">Bateau</th>
-        <th scope="col">Type de fermeture</th>
-        <th scope="col">Durée de fermeture</th>
-        <th scope="col">Date de fermeture</th>
-        <th scope="col">Date de réouverture</th>
-        <th scope="col">Risque de bouchons</th>
+        <th scope="col" class="text-center">Bateau</th>
+        <th scope="col" class="text-center">Type de fermeture</th>
+        <th scope="col" class="text-center">Durée de fermeture</th>
+        <th scope="col" class="text-center">Date de fermeture</th>
+        <th scope="col" class="text-center">Date de réouverture</th>
+        <th scope="col" class="text-center">Risque de bouchons</th>
     </tr>
     </thead>
     <tbody>
     <tr>
-        <td></td>
-        <td>@boat.BoatName</td>
-        <td>@boat.ClosingType</td>
-        <td>@boat.ReopeningDate.Subtract(@boat.ClosingDate)</td>
-        <td>@boat.ClosingDate.ToString("dddd d MMMM, hh:mm", culture)</td>
-        <td>@boat.ReopeningDate.ToString("dddd d MMMM, hh:mm", culture)</td>
-        <td></td>
+        <td class="text-center">@boat.BoatName</td>
+        <td class="text-center">@boat.ClosingType</td>
+        <td class="text-center">@boat.ReopeningDate.Subtract(@boat.ClosingDate)</td>
+        <td class="text-center">@boat.ClosingDate.ToString("dddd d MMMM, hh:mm", culture)</td>
+        <td class="text-center">@boat.ReopeningDate.ToString("dddd d MMMM, hh:mm", culture)</td>
+        @if (@boat.ClosingDate.Hour >= 7 && @boat.ClosingDate.Hour <= 9 
+             || @boat.ClosingDate.Hour >= 17 && @boat.ClosingDate.Hour <= 19
+            )
+        {
+            <td class="text-center" style="color: red;">Perturbé</td>
+        }
+        else
+        {
+            <td class="text-center" style="color: green;">Fluide</td>
+        }
+        
     </tr>
     </tbody>
 </table>
