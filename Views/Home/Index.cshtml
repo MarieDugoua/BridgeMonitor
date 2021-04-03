@@ -69,7 +69,9 @@
         <th scope="col" class="text-center">Type de fermeture</th>
         <th scope="col" class="text-center">Durée de fermeture</th>
         <th scope="col" class="text-center">Date de fermeture</th>
+        <th scope="col" class="text-center">Heure de fermeture</th>
         <th scope="col" class="text-center">Date de réouverture</th>
+        <th scope="col" class="text-center">Heure de réouverture</th>
         <th scope="col" class="text-center">Risque de bouchons</th>
     </tr>
     </thead>
@@ -78,8 +80,10 @@
         <td class="text-center">@boat.BoatName</td>
         <td class="text-center">@boat.ClosingType</td>
         <td class="text-center">@boat.ReopeningDate.Subtract(@boat.ClosingDate)</td>
-        <td class="text-center">@boat.ClosingDate.ToString("dddd d MMMM, hh:mm", culture)</td>
-        <td class="text-center">@boat.ReopeningDate.ToString("dddd d MMMM, hh:mm", culture)</td>
+        <td class="text-center">@boat.ClosingDate.ToString("dddd d MMMM", culture)</td>
+        <td class="text-center">@boat.ClosingDate.ToString("hh:mm", culture)</td>
+        <td class="text-center">@boat.ReopeningDate.ToString("dddd d MMMM", culture)</td>
+        <td class="text-center">@boat.ReopeningDate.ToString("hh:mm", culture)</td>
         @if (@boat.ClosingDate.Hour >= 7 && @boat.ClosingDate.Hour <= 9 
              || @boat.ClosingDate.Hour >= 17 && @boat.ClosingDate.Hour <= 19
             )
