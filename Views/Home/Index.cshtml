@@ -2,10 +2,62 @@
     ViewData["Title"] = "Home Page";
 }
 @using System.Globalization
+@using Microsoft.JSInterop.Infrastructure
 @model List<BridgeInfo>
+
+@{
+    var culture = new CultureInfo("fr-FR");
+    Model.Sort((b1, b2) => DateTimeOffset.Compare(b1.ClosingDate, b2.ClosingDate));
+    BridgeInfo boat = null;
+    foreach (var info in Model)
+    {
+        if (DateTimeOffset.Compare(DateTimeOffset.Now, info.ClosingDate) < 0)
+        {
+            boat = info;
+            break;
+        }
+    }
+}
+
+@section Scripts
+    {
+        <script>
+        var closingDate = "<%= @boat.ClosingDate %>";
+        var countDownDate = new Date(closingDate).getTime();
+
+        // Update the count down every 1 second
+        var x = setInterval(function() {
+        
+          // Get today's date and time
+          var now = new Date().getTime();
+        
+          // Find the distance between now and the count down date
+          var distance = countDownDate - now;
+        
+          // Time calculations for days, hours, minutes and seconds
+          var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+          // Display the result in the element with id="demo"
+          document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+          + minutes + "m " + seconds + "s ";
+        
+          // If the count down is finished, write some text
+          if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("demo").innerHTML = "EXPIRED";
+          }
+        }, 1000);
+        </script>
+    }
 
 <div class="text-center">
     <h1 class="display-4">Prochaine fermeture</h1>
+    
+    <!-- Display the countdown timer in an element -->
+    <p id="demo"></p>
 </div>
 <table class="table">
     <thead>
@@ -16,20 +68,18 @@
         <th scope="col">Durée de fermeture</th>
         <th scope="col">Date de fermeture</th>
         <th scope="col">Date de réouverture</th>
+        <th scope="col">Risque de bouchons</th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var info in Model)
-    {
-        var culture = new CultureInfo("fr-FR");
-        <tr>
-            <td></td>
-            <td>@info.BoatName</td>
-            <td>@info.ClosingType</td>
-            <td>@info.ReopeningDate.Subtract(@info.ClosingDate)</td>
-            <td>@info.ClosingDate.ToString("dddd d MMMM, hh:mm", culture)</td>
-            <td>@info.ReopeningDate.ToString("dddd d MMMM, hh:mm", culture)</td>
-        </tr>
-    }
+    <tr>
+        <td></td>
+        <td>@boat.BoatName</td>
+        <td>@boat.ClosingType</td>
+        <td>@boat.ReopeningDate.Subtract(@boat.ClosingDate)</td>
+        <td>@boat.ClosingDate.ToString("dddd d MMMM, hh:mm", culture)</td>
+        <td>@boat.ReopeningDate.ToString("dddd d MMMM, hh:mm", culture)</td>
+        <td></td>
+    </tr>
     </tbody>
 </table>
