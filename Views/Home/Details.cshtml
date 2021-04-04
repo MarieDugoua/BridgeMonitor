@@ -1,0 +1,91 @@
+@{
+    ViewData["Title"] = "Details Page";
+}
+@using System.Globalization
+@model BridgeInfo
+
+@{
+    var culture = new CultureInfo("fr-FR");
+   
+}
+
+@section Scripts
+    {
+        <script>
+        var closingDate = "<%= @Model.ClosingDate %>";
+        var countDownDate = new Date(closingDate).getTime();
+
+        // Update the count down every 1 second
+        var x = setInterval(function() {
+        
+          // Get today's date and time
+          var now = new Date().getTime();
+        
+          // Find the distance between now and the count down date
+          var distance = countDownDate - now;
+        
+          // Time calculations for days, hours, minutes and seconds
+          var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+          // Display the result in the element with id="demo"
+          document.getElementById("countDown").style.color = "red";
+          document.getElementById("countDown").style.fontSize= "40px";
+          document.getElementById("countDown").innerHTML = days + "j " + hours + "h "
+          + minutes + "m " + seconds + "s ";
+        
+          // If the count down is finished, write some text
+          if (distance <= 0) {
+            clearInterval(x);
+            document.getElementById("countDown").style.color = "red";
+            document.getElementById("countDown").style.fontSize= "40px";
+            document.getElementById("countDown").innerHTML = "Expiré";
+          }
+        }, 1000);
+        </script>
+    }
+
+<div class="text-center">
+    <h1 class="display-4">Détails fermeture</h1>
+    
+    <!-- Display the countdown timer in an element -->
+    <p id="countDown"></p>
+</div>
+<table class="table table-sm" style="margin: 5% 0;">
+    <thead>
+    <tr>
+        <th scope="col" class="text-center">Bateau</th>
+        <th scope="col" class="text-center">Type de fermeture</th>
+        <th scope="col" class="text-center">Durée de fermeture</th>
+        <th scope="col" class="text-center">Date de fermeture</th>
+        <th scope="col" class="text-center">Heure de fermeture</th>
+        <th scope="col" class="text-center">Date de réouverture</th>
+        <th scope="col" class="text-center">Heure de réouverture</th>
+        <th scope="col" class="text-center">Risque de bouchons</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="text-center">@Model.BoatName</td>
+        <td class="text-center">@Model.ClosingType</td>
+        <td class="text-center">@Model.ReopeningDate.Subtract(@Model.ClosingDate)</td>
+        <td class="text-center">@Model.ClosingDate.ToString("dddd d MMMM", culture)</td>
+        <td class="text-center">@Model.ClosingDate.ToString("hh:mm", culture)</td>
+        <td class="text-center">@Model.ReopeningDate.ToString("dddd d MMMM", culture)</td>
+        <td class="text-center">@Model.ReopeningDate.ToString("hh:mm", culture)</td>
+        @if (@Model.ClosingDate.Hour >= 7 && @Model.ClosingDate.Hour <= 9 
+             || @Model.ClosingDate.Hour >= 17 && @Model.ClosingDate.Hour <= 19
+            )
+        {
+            <td class="text-center" style="color: red;">Perturbé</td>
+        }
+        else
+        {
+            <td class="text-center" style="color: green;">Fluide</td>
+        }
+        
+    </tr>
+    </tbody>
+</table>

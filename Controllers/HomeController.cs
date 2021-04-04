@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,39 +12,36 @@ namespace BridgeMonitor.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public static List<BridgeInfo> infos = new List<BridgeInfo>();
+        private static readonly HttpClient client = new HttpClient();
+        
+        public HomeController()
         {
-            _logger = logger;
+            var stringResult = client.GetStringAsync("https://api.alexandredubois.com/pont-chaban/api.php");
+            var response = stringResult.Result;
+            var result = JsonConvert.DeserializeObject<List<BridgeInfo>>(response);
+            infos = result.OrderBy(closing =>
+                Convert.ToDateTime(closing.ClosingDate)).ToList();
         }
-
+        
         public IActionResult Index()
         {
-            var infos = GetBridgeInfosFromApi();
             return View(infos);
         }
 
         public IActionResult AllClosing()
         {
-            var infos = GetBridgeInfosFromApi();
             return View(infos);
+        }
+        [HttpGet]
+        [Route("/Home/Details/{Id}")]
+        public IActionResult Details(int id)
+        {
+            return View(infos[id]);
         }
         public IActionResult Privacy()
         {
-            var infos = GetBridgeInfosFromApi();
             return View(infos);
-        }
-
-        private static List<BridgeInfo> GetBridgeInfosFromApi()
-        {
-            using (var client = new HttpClient())
-            {
-                var response = client.GetAsync("https://api.alexandredubois.com/pont-chaban/api.php");
-                var stringResult = response.Result.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<List<BridgeInfo>>(stringResult.Result);
-                return result;
-            }
         }
         
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -3,67 +3,88 @@
 }
 @using System.Globalization
 @model List<BridgeInfo>
-@{ Model.Sort((b1, b2) => DateTimeOffset.Compare(b1.ClosingDate, b2.ClosingDate)); }
-
-<div class="text-center">
-    <h1 class="display-4">Fermeture à venir</h1>
-</div>
-<table class="table">
-    <thead>
-    <tr>
-        <th scope="col" class="text-center">Bateau</th>
-        <th scope="col" class="text-center">Type de fermeture</th>
-        <th scope="col" class="text-center">Durée de fermeture</th>
-        <th scope="col" class="text-center">Date de fermeture</th>
-        <th scope="col" class="text-center">Heure de fermeture</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var info in Model)
+@{
+    var culture = new CultureInfo("fr-FR");
+    var id = 0;
+    var passed = new List<BridgeInfo>();
+    var next = new List<BridgeInfo>();
+    
+    Model.Sort((b1, b2) => DateTimeOffset.Compare(b1.ClosingDate, b2.ClosingDate));
+    
+    foreach (var infos in Model)
     {
-        var culture = new CultureInfo("fr-FR");
-        if (@info.ClosingDate >= DateTime.Now )
+        if (infos.ClosingDate > DateTime.Now)
         {
-            <tr>
-                <td class="text-center">@info.BoatName</td>
-                <td class="text-center">@info.ClosingType</td>
-                <td class="text-center">@info.ReopeningDate.Subtract(@info.ClosingDate)</td>
-                <td class="text-center">@info.ClosingDate.ToString("dddd d MMMM yyyy", culture)</td>
-                <td class="text-center">@info.ClosingDate.ToString("hh:mm", culture)</td>
-            </tr>
+            next.Add(infos);
+        }
+        else
+        {
+            passed.Add(infos);
+
         }
     }
-    </tbody>
-</table> 
+}
 
 <div class="text-center">
     <h1 class="display-4">Fermeture passées</h1>
 </div>
-<table class="table">
+<table class="table table-sm" style="margin: 5% 0;">
     <thead>
     <tr>
         <th scope="col" class="text-center">Bateau</th>
-        <th scope="col" class="text-center">Type de fermeture</th>
         <th scope="col" class="text-center">Durée de fermeture</th>
         <th scope="col" class="text-center">Date de fermeture</th>
         <th scope="col" class="text-center">Heure de fermeture</th>
+        <th scope="col" class="text-center">Détails</th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var info in Model)
+    @foreach (var info in passed)
     {
-
-        var culture = new CultureInfo("fr-FR");
-        if (@info.ClosingDate < DateTime.Now)
-        {
-            <tr>
-                <td class="text-center">@info.BoatName</td>
-                <td class="text-center">@info.ClosingType</td>
-                <td class="text-center">@info.ReopeningDate.Subtract(@info.ClosingDate)</td>
-                <td class="text-center">@info.ClosingDate.ToString("dddd d MMMM yyyy", culture)</td>
-                <td class="text-center">@info.ClosingDate.ToString("hh:mm", culture)</td>
-            </tr>
-        }
+        <tr>
+            <td class="text-center">@info.BoatName</td>
+            <td class="text-center">@info.ReopeningDate.Subtract(@info.ClosingDate)</td>
+            <td class="text-center">@info.ClosingDate.ToString("dddd d MMMM", culture)</td>
+            <td class="text-center">@info.ClosingDate.ToString("hh:mm", culture)</td>
+            <td>
+                <a asp-area="" asp-controller="Home" asp-action="Details" asp-route-id="@id">
+                    Plus d'informations
+                </a>
+            </td>
+        </tr>
+        id += 1;
     }
     </tbody>
 </table> 
+
+<div class="text-center">
+    <h1 class="display-4">Fermeture à venir</h1>
+</div>
+<table class="table table-sm" style="margin: 5% 0;">
+    <thead>
+    <tr>
+        <th scope="col" class="text-center">Bateau</th>
+        <th scope="col" class="text-center">Durée de fermeture</th>
+        <th scope="col" class="text-center">Date de fermeture</th>
+        <th scope="col" class="text-center">Heure de fermeture</th>
+        <th scope="col" class="text-center">Détails</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var info in next)
+    {
+        <tr>
+            <td class="text-center">@info.BoatName</td>
+            <td class="text-center">@info.ReopeningDate.Subtract(@info.ClosingDate)</td>
+            <td class="text-center">@info.ClosingDate.ToString("dddd d MMMM", culture)</td>
+            <td class="text-center">@info.ClosingDate.ToString("hh:mm", culture)</td>
+            <td>
+                <a asp-area="" asp-controller="Home" asp-action="Details" asp-route-id="@id">
+                    Plus d'informations
+                </a>
+            </td>
+        </tr>
+        id++;
+    }
+    </tbody>
+</table>  
